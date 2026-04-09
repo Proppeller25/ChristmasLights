@@ -1,6 +1,9 @@
 const containerDiv = document.getElementById('containerDiv')
 const startButton = document.getElementById('startButton')
 const stopButton = document.getElementById('stopButton')
+const addIntensity = document.getElementById('addIntensity')
+const reduceIntensity = document.getElementById('reduceIntensity')
+const speedValue = document.getElementById('speedValue')
 
 const colors = [
   '#FF0000',
@@ -8,7 +11,8 @@ const colors = [
   '#800080',
   '#008000',
   '#FFFF00',
-  '#FFA500'
+  '#FFA500',
+  '#FF1493'
 ]
 
 const brightColors = [
@@ -17,58 +21,121 @@ const brightColors = [
   '#DA70D6',
   '#32CD32',
   '#f7f773',
-  '#FFD700'
+  '#FFD700',
+  '#FF69B4'
 ]
 
-colors.forEach((color, i) => {
-  containerDiv.innerHTML += `
-    <div id = "light-${i}" style="background-color: ${color}"></div>
-  `
-})
+const MIN_CYCLE_DURATION = 100
+const MAX_CYCLE_DURATION = 3000
+const SPEED_STEP = 100
 
-let intervals = []   // store all interval IDs
-let timeouts = []    // optional: store timeouts if you want to clean them too
+// These values control the current playback state of the lightshow.
+let cycleDuration = 1000
+let isRunning = false
+let lightTimers = []
 
-const startLights = () => {
-  // Clear any existing timers first (avoid duplicates)
-  intervals.forEach(clearInterval)
-  timeouts.forEach(clearTimeout)
-  intervals = []
-  timeouts = []
+// Build the light bulbs once, then reuse the same elements while the show runs.
+containerDiv.innerHTML = colors
+  .map((color, i) => `<div id="light-${i}" style="background-color: ${color}"></div>`)
+  .join('')
 
-  colors.forEach((color, i) => {
-    const div = document.getElementById('light-' + i)
-    if (i % 2 === 0) {
-      const intervalId = setInterval(() => {
-        div.style.backgroundColor = brightColors[i]
-        const timeoutId = setTimeout(() => {
-          div.style.backgroundColor = color
-        }, 500)
-        timeouts.push(timeoutId)
-      }, 1000)
-      intervals.push(intervalId)
-    } else {
-      // Odd lights: start after 500ms delay
-      const timeoutId = setTimeout(() => {
-        const intervalId = setInterval(() => {
-          div.style.backgroundColor = brightColors[i]
-          const innerTimeoutId = setTimeout(() => {
-            div.style.backgroundColor = color
-          }, 500)
-          timeouts.push(innerTimeoutId)
-        }, 1000)
-        intervals.push(intervalId)
-      }, 500)
-      timeouts.push(timeoutId)
-    }
+const lightElements = colors.map((_, i) => document.getElementById(`light-${i}`))
+
+const getFlashDuration = () => Math.max(80, Math.min(cycleDuration - 20, Math.round(cycleDuration * 0.5)))
+
+const getOffsetDelay = () => Math.round(cycleDuration / 2)
+
+const clearLightTimers = () => {
+  lightTimers.forEach(clearTimeout)
+  lightTimers = []
+}
+
+const resetLights = () => {
+  lightElements.forEach((light, i) => {
+    light.style.backgroundColor = colors[i]
   })
 }
 
-startButton.addEventListener('click', startLights)
+const getSpeedLabel = () => {
+  if (cycleDuration <= 500) return 'Very fast'
+  if (cycleDuration <= 900) return 'Fast'
+  if (cycleDuration <= 1500) return 'Normal'
+  if (cycleDuration <= 2200) return 'Slow'
+  return 'Very slow'
+}
 
-stopButton.addEventListener('click', () => {
-  intervals.forEach(clearInterval)
-  timeouts.forEach(clearTimeout)
-  intervals = []
-  timeouts = []
-})
+const updateControls = () => {
+  speedValue.textContent = `${getSpeedLabel()} (${cycleDuration}ms)`
+  addIntensity.disabled = cycleDuration <= MIN_CYCLE_DURATION
+  reduceIntensity.disabled = cycleDuration >= MAX_CYCLE_DURATION
+  startButton.disabled = isRunning
+  stopButton.disabled = !isRunning
+}
+
+const scheduleLight = (index, delay) => {
+  const light = lightElements[index]
+
+  // Each bulb manages its own loop so we can restart the full show cleanly at a new speed.
+  const runCycle = () => {
+    if (!isRunning) return
+
+    light.style.backgroundColor = brightColors[index]
+
+    // First switch to the brighter color, then restore the base color after the flash duration.
+    lightTimers[index] = setTimeout(() => {
+      light.style.backgroundColor = colors[index]
+
+      if (!isRunning) return
+
+      // Queue the next flash using the latest speed value.
+      lightTimers[index] = setTimeout(runCycle, cycleDuration - getFlashDuration())
+    }, getFlashDuration())
+  }
+
+  lightTimers[index] = setTimeout(runCycle, delay)
+}
+
+const startLights = () => {
+  clearLightTimers()
+  resetLights()
+  isRunning = true
+
+  lightElements.forEach((_, i) => {
+    const initialDelay = i % 2 === 0 ? 0 : getOffsetDelay()
+    scheduleLight(i, initialDelay)
+  })
+
+  updateControls()
+}
+
+const stopLights = () => {
+  isRunning = false
+  clearLightTimers()
+  resetLights()
+  updateControls()
+}
+
+const changeSpeed = (delta) => {
+  const nextDuration = Math.min(MAX_CYCLE_DURATION, Math.max(MIN_CYCLE_DURATION, cycleDuration + delta))
+
+  if (nextDuration === cycleDuration) {
+    return
+  }
+
+  cycleDuration = nextDuration
+
+  // If the show is already running, restart once so every bulb uses the updated timing immediately.
+  if (isRunning) {
+    startLights()
+    return
+  }
+
+  updateControls()
+}
+
+startButton.addEventListener('click', startLights)
+stopButton.addEventListener('click', stopLights)
+addIntensity.addEventListener('click', () => changeSpeed(-SPEED_STEP))
+reduceIntensity.addEventListener('click', () => changeSpeed(SPEED_STEP))
+
+updateControls()

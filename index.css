@@ -59,10 +59,27 @@ h1 {
   background: #f9fbff;
 }
 
+.controls-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.speed-status {
+  margin: 0;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+}
+
+.speed-status span {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
 #containerDiv {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, minmax(56px, 1fr));
+  grid-template-columns: repeat(7, minmax(56px, 1fr));
   gap: 20px 16px;
   align-items: end;
   justify-items: center;
@@ -138,7 +155,15 @@ h1 {
   gap: 12px;
 }
 
-#actionButtonsDiv button {
+#intensityButtonsDiv {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+#actionButtonsDiv button,
+#intensityButtonsDiv button {
   min-width: 170px;
   padding: 12px 18px;
   border: none;
@@ -160,12 +185,27 @@ h1 {
   background: var(--button-stop);
 }
 
-#actionButtonsDiv button:hover {
+#addIntensity,
+#reduceIntensity {
+  background: #344054;
+}
+
+#actionButtonsDiv button:hover,
+#intensityButtonsDiv button:hover {
   transform: translateY(-1px);
 }
 
-#actionButtonsDiv button:active {
+#actionButtonsDiv button:active,
+#intensityButtonsDiv button:active {
   transform: translateY(1px);
+}
+
+#actionButtonsDiv button:disabled,
+#intensityButtonsDiv button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 @keyframes sway {
@@ -210,11 +250,15 @@ h1 {
   }
 
   #containerDiv {
-    grid-template-columns: repeat(3, minmax(54px, 1fr));
+    grid-template-columns: repeat(4, minmax(54px, 1fr));
     gap: 18px 12px;
   }
 
   #actionButtonsDiv button {
+    width: 100%;
+  }
+
+  #intensityButtonsDiv button {
     width: 100%;
   }
 }

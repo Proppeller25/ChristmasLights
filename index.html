@@ -15,10 +15,19 @@
       <div id="containerDiv"></div>
     </section>
 
-    <div id="actionButtonsDiv">
-      <button id="startButton">Start Light show</button>
-      <button id="stopButton">Stop Light show</button>
-    </div>
+    <section class="controls-panel" aria-label="Lightshow controls">
+      <p class="speed-status">Current speed: <span id="speedValue">Normal</span></p>
+
+      <div id="actionButtonsDiv">
+        <button id="startButton">Start Light show</button>
+        <button id="stopButton">Stop Light show</button>
+      </div>
+
+      <div id="intensityButtonsDiv">
+        <button id="addIntensity">Faster</button>
+        <button id="reduceIntensity">Slower</button>
+      </div>
+    </section>
   </main>
   <script src="index.js"></script>
 </body>
