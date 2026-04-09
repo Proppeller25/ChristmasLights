@@ -1,43 +1,220 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --panel-border: #dbe3ef;
+  --text-main: #1c2333;
+  --text-soft: #667085;
+  --wire: #b9c4d6;
+  --button-start: #1f7a4f;
+  --button-stop: #b33b52;
+  --shadow: 0 16px 40px rgba(18, 32, 56, 0.08);
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  padding: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-#containerDiv {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 10px;
-  max-width: 100%;
-  justify-self: center;
-}
-
-#containerDiv div {
-  height: 100px;
-  width: 100px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: bold;
-  border-radius: 50%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-main);
+  background: var(--bg);
+}
+
+.app-shell {
+  width: min(100%, 760px);
+  display: grid;
+  gap: 18px;
+  padding: 28px 24px;
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  animation: page-in 420ms ease-out;
+}
+
+h1 {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.subtitle {
+  margin: -6px 0 0;
+  text-align: center;
+  font-size: 0.98rem;
+  color: var(--text-soft);
+}
+
+.lights-panel {
+  position: relative;
+  padding: 28px 18px 20px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: #f9fbff;
+}
+
+#containerDiv {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(56px, 1fr));
+  gap: 20px 16px;
+  align-items: end;
+  justify-items: center;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+#containerDiv::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 3%;
+  right: 3%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--wire);
+}
+
+#containerDiv div {
+  position: relative;
+  width: clamp(52px, 9vw, 72px);
+  height: clamp(68px, 11vw, 92px);
+  margin-top: 6px;
+  border-radius: 46% 46% 52% 52%;
+  box-shadow:
+    inset 0 8px 10px rgba(255, 255, 255, 0.18),
+    inset 0 -10px 16px rgba(0, 0, 0, 0.12),
+    0 8px 18px rgba(19, 31, 52, 0.12);
+  transform-origin: top center;
+  transition: background-color 220ms ease, transform 160ms ease, box-shadow 220ms ease;
+  animation: bulb-in 360ms ease backwards, sway 5s ease-in-out infinite 360ms;
+}
+
+#containerDiv div:nth-child(2n) {
+  animation-duration: 360ms, 5.8s;
+  animation-direction: normal, reverse;
+}
+
+#containerDiv div:nth-child(1) { animation-delay: 0ms, 360ms; }
+#containerDiv div:nth-child(2) { animation-delay: 50ms, 360ms; }
+#containerDiv div:nth-child(3) { animation-delay: 100ms, 360ms; }
+#containerDiv div:nth-child(4) { animation-delay: 150ms, 360ms; }
+#containerDiv div:nth-child(5) { animation-delay: 200ms, 360ms; }
+#containerDiv div:nth-child(6) { animation-delay: 250ms, 360ms; }
+
+#containerDiv div::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #cfd6e2, #818ca1 70%, #5a6373);
+}
+
+#containerDiv div::after {
+  content: "";
+  position: absolute;
+  inset: 12% 18% 20%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 44%);
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 #actionButtonsDiv {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 #actionButtonsDiv button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+  min-width: 170px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 5px;
-  background-color: #007BFF;
-  color: white;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 10px 20px rgba(18, 32, 56, 0.12);
+}
+
+#startButton {
+  background: var(--button-start);
+}
+
+#stopButton {
+  background: var(--button-stop);
+}
+
+#actionButtonsDiv button:hover {
+  transform: translateY(-1px);
+}
+
+#actionButtonsDiv button:active {
+  transform: translateY(1px);
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3deg) translateY(3px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bulb-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 22px 16px;
+  }
+
+  .lights-panel {
+    padding: 24px 12px 16px;
+  }
+
+  #containerDiv {
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
+    gap: 18px 12px;
+  }
+
+  #actionButtonsDiv button {
+    width: 100%;
+  }
 }
