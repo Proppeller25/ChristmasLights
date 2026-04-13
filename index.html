@@ -8,26 +8,75 @@
 </head>
 <body>
   <main class="app-shell">
-    <h1>Christmas Lights Simulator</h1>
-    <p class="subtitle">A simple festive lightshow.</p>
+    <header class="hero">
+      <p class="eyebrow">Holiday Control Deck</p>
+      <h1>Christmas Lights Simulator</h1>
+      <p class="subtitle">Build a festive lightshow, fine-tune the tempo, and preview your own color palette.</p>
+    </header>
 
-    <section class="lights-panel" aria-label="Christmas lights display">
-      <div id="containerDiv"></div>
-    </section>
+    <div class="app-grid">
+      <section class="lights-panel card" aria-label="Christmas lights display">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-kicker">Preview</p>
+            <h2>Light Strand</h2>
+          </div>
+          <p class="speed-status">Current speed: <span id="speedValue">Normal</span></p>
+        </div>
 
-    <section class="controls-panel" aria-label="Lightshow controls">
-      <p class="speed-status">Current speed: <span id="speedValue">Normal</span></p>
+        <div id="selectColors" class="picker-panel">
+          <div class="colorsInputDiv display">
+            <p class="picker-title">Custom palette</p>
+            <p class="picker-copy">Pick seven bulb colors, then apply them to the strand.</p>
+            <div class="color-grid">
+              <input type="color" name="color1" class="selectedColor">
+              <input type="color" name="color2" class="selectedColor">
+              <input type="color" name="color3" class="selectedColor">
+              <input type="color" name="color4" class="selectedColor">
+              <input type="color" name="color5" class="selectedColor">
+              <input type="color" name="color6" class="selectedColor">
+              <input type="color" name="color7" class="selectedColor">
+            </div>
+          </div>
+          <button id="applyColors" class="display">Apply Colors</button>
+        </div>
 
-      <div id="actionButtonsDiv">
-        <button id="startButton">Start Light show</button>
-        <button id="stopButton">Stop Light show</button>
-      </div>
+        <div class="strand-stage">
+          <div id="containerDiv"></div>
+        </div>
+      </section>
 
-      <div id="intensityButtonsDiv">
-        <button id="addIntensity">Faster</button>
-        <button id="reduceIntensity">Slower</button>
-      </div>
-    </section>
+      <section class="controls-panel card" aria-label="Lightshow controls">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-kicker">Controls</p>
+            <h2>Show Settings</h2>
+          </div>
+          <p class="panel-note">Everything here updates the same strand preview.</p>
+        </div>
+
+        <div class="control-group">
+          <p class="control-label">Playback</p>
+          <div id="actionButtonsDiv">
+            <button id="startButton">Start Light Show</button>
+            <button id="stopButton">Stop Light Show</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <p class="control-label">Speed</p>
+          <div id="intensityButtonsDiv">
+            <button id="addIntensity">Faster</button>
+            <button id="reduceIntensity">Slower</button>
+          </div>
+        </div>
+
+        <div id="customColors" class="control-group">
+          <p class="control-label">Palette</p>
+          <button id="selectCustomColor">Select Custom Colors</button>
+        </div>
+      </section>
+    </div>
   </main>
   <script src="index.js"></script>
 </body>
